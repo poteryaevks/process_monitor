@@ -91,33 +91,42 @@ class ProcessTable(tk.Frame):
             sortFunc(self.table, self.column[column], self.sorter[column], checkReverse)
 
     def update(self, ps):
-        """ сохранить актуальные """
-        pids = []
+        ''' сохранить актуальные '''
+        currentPidList = []
 
         for p in ps:
-            pids.append(p.pid)
+            currentPidList.append(p.pid)
             if not pidExists(self.table, p.pid):
                 self.size += 1
                 self.insert((self.size, p.pid, p.name(), p.username()))
 
-        """ убить устаревшие """
+        ''' убить устаревшие '''
         for child in self.table.get_children(''):
             pid = self.table.set(child, 1)
-            if len([p for p in pids if int(pid) == p]) == 0:
+            if len([p for p in currentPidList if int(pid) == p]) == 0:
                 self.table.delete(child)
 
 
 class MainWindow:
+
     title = "Process monitor"
 
-    def __init__(self):
+    def __init__(self, processes):
         self.window = tk.Tk()
         self.window.title(self.title)
         self.table = ProcessTable(self.window)
         self.table.pack(expand=tk.YES, fill=tk.BOTH)
+        self.processes = processes
+        self.window.after(50, self.update)
 
     def show(self):
         self.window.mainloop()
 
     def getTable(self):
         return self.table
+
+    def update(self):
+        self.table.update(self.processes)
+        self.window.after(50, self.update)
+
+

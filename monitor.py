@@ -10,6 +10,6 @@ def userName(string):
 class Processes:
 
     def __iter__(self):
-        for process in psutil.process_iter(['pid', 'name', 'username']):
-            if getpass.getuser() == userName(process.username()):
+        for process in psutil.process_iter():
+            # if getpass.getuser() == userName(process.username()):
                 yield process
